@@ -7,11 +7,37 @@ body {
   align-items: center;
 }
 
+.game-shell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
 canvas {
   background-color: lightblue;
-  margin: 20px;
+  margin: 20px 20px 0;
   border-radius: 15px;
   border: 5px solid rgba(118, 0, 233, 0.375);
+}
+
+#restartButton {
+  background: #7600e9;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease;
+}
+
+#restartButton:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
 img {

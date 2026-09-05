@@ -28,6 +28,7 @@ const player = {
   facingRight: true,
   deadAndDeathAnimationDone: false,
   winConditionMet: false,
+  canFly: false,
 };
 
 let hitDx;
@@ -75,6 +76,7 @@ let offsetY = 0;
 let platforms = [];
 let fakePlatforms = [];
 let badPlatforms = [];
+let secrets = [];
 let cannons = [];
 const cannonWidth = 118;
 const cannonHeight = 80;

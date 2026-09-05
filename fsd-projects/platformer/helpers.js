@@ -27,6 +27,7 @@ function main() {
   drawPlatforms();
   drawFakePlatforms();
   drawBadPlatforms();
+  drawSecrets();
   drawProjectiles();
   drawCannons();
   drawCollectables();
@@ -40,6 +41,7 @@ function main() {
   projectileCollision(); //checks if the player is getting hit by a projectile in the next frame
   badPlatformCollision(); //checks if the player is touching a bad platform
   collectablesCollide(); //checks if player has touched a collectable
+  secretCollision(); //checks if player has touched the hidden flight button
 
   animate(); //this changes halle's picture to the next frame so it looks animated.
   // debug()                   //debugging values. Comment this out when not debugging.
@@ -100,6 +102,12 @@ function changeAnimationType() {
     }
     return;
   }
+
+  if (player.canFly && !player.onGround && (keyPress.up || keyPress.space)) {
+    currentAnimationType = animationTypes.flyingJump;
+    return;
+  }
+
   if (jumpTimer > 0 && !player.onGround) {
     currentAnimationType = animationTypes.jump;
     jumpTimer--;
@@ -233,7 +241,7 @@ function drawRobot() {
       player.x - hitDx,
       player.y - hitDy,
       player.width,
-      player.height
+      player.height,
     );
   } else {
     //for running to the left you mirror the image
@@ -248,7 +256,7 @@ function drawRobot() {
       -player.x - player.width + hitDx,
       player.y - hitDy,
       player.width,
-      player.height
+      player.height,
     );
     ctx.restore(); //put the canvas back to normal
   }
@@ -270,7 +278,7 @@ function collision() {
         platforms[i].x,
         platforms[i].y,
         platforms[i].width,
-        platforms[i].height
+        platforms[i].height,
       );
     }
   }
@@ -393,7 +401,7 @@ function deathOfPlayer() {
     canvas.width / 4,
     canvas.height / 6,
     canvas.width / 2,
-    canvas.height / 2
+    canvas.height / 2,
   );
   ctx.fillStyle = "black";
   ctx.font = "800% serif";
@@ -401,14 +409,14 @@ function deathOfPlayer() {
     "You are dead",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 5,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   ctx.font = "500% serif";
   ctx.fillText(
     "Hit any key to restart",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 3,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   if (keyPress.any) {
     keyPress.any = false;
@@ -432,6 +440,14 @@ function playerFrictionAndGravity() {
     player.speedX = player.speedX - friction;
   } else {
     player.speedX = player.speedX + friction;
+  }
+
+  if (player.canFly && !player.onGround && (keyPress.up || keyPress.space)) {
+    player.speedY -= 0.75;
+    if (player.speedY < -7) {
+      player.speedY = -7;
+    }
+    return;
   }
 
   if (player.onGround === false) {
@@ -509,7 +525,7 @@ function makeGrid() {
     ctx.fillText(
       i, // text
       i - 15, // x location
-      25 // y location
+      25, // y location
     );
   }
 
@@ -523,7 +539,7 @@ function makeGrid() {
     ctx.fillText(
       i, // text
       10, // x location
-      i + 5 // y location
+      i + 5, // y location
     );
   }
   gridMade = true;
@@ -536,7 +552,7 @@ function drawProjectiles() {
       projectiles[i].x,
       projectiles[i].y,
       projectiles[i].width,
-      projectiles[i].height
+      projectiles[i].height,
     );
     projectiles[i].x = projectiles[i].x + projectiles[i].speedX;
     projectiles[i].y = projectiles[i].y + projectiles[i].speedY;
@@ -552,7 +568,7 @@ function drawCannons() {
         cannons[i].x,
         cannons[i].y,
         cannons[i].projectileWidth,
-        cannons[i].projectileHeight
+        cannons[i].projectileHeight,
       );
     } else {
       cannons[i].projectileCountdown = cannons[i].projectileCountdown + 1;
@@ -584,6 +600,46 @@ function drawCannons() {
   }
 }
 
+function drawSecrets() {
+  for (var i = 0; i < secrets.length; i++) {
+    if (!secrets[i].found) {
+      ctx.fillStyle = secrets[i].color;
+      ctx.fillRect(
+        secrets[i].x,
+        secrets[i].y,
+        secrets[i].width,
+        secrets[i].height,
+      );
+    }
+  }
+}
+
+function createSecret(x, y, width, height, color = "rgba(255,255,255,0.18)") {
+  secrets.push({
+    x,
+    y,
+    width,
+    height,
+    color,
+    found: false,
+  });
+}
+
+function secretCollision() {
+  for (var i = 0; i < secrets.length; i++) {
+    if (
+      !secrets[i].found &&
+      secrets[i].x + secrets[i].width > player.x &&
+      secrets[i].x < player.x + hitBoxWidth &&
+      secrets[i].y < player.y + hitBoxHeight &&
+      secrets[i].y + secrets[i].height > player.y
+    ) {
+      secrets[i].found = true;
+      player.canFly = true;
+    }
+  }
+}
+
 function drawCollectables() {
   for (var i = 0; i < collectables.length; i++) {
     if (collectables[i].collected !== true) {
@@ -593,7 +649,7 @@ function drawCollectables() {
         collectables[i].x,
         collectables[i].y,
         collectableWidth,
-        collectableHeight
+        collectableHeight,
       );
     } else {
       //draw the icons at the top if collected
@@ -606,7 +662,7 @@ function drawCollectables() {
         200 + 100 * i,
         10,
         collectableWidth,
-        collectableHeight
+        collectableHeight,
       );
       ctx.globalAlpha = 1;
     }
@@ -679,7 +735,7 @@ function winGame() {
     canvas.width / 4,
     canvas.height / 6,
     canvas.width / 2,
-    canvas.height / 2
+    canvas.height / 2,
   );
   ctx.fillStyle = "white";
   ctx.font = "800% serif";
@@ -687,14 +743,14 @@ function winGame() {
     "You Win!",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 5,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   ctx.font = "500% serif";
   ctx.fillText(
     "Hit any key to restart",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 3,
-    (canvas.width / 16) * 14
+    (canvas.width / 16) * 14,
   );
   if (keyPress.any) {
     keyPress.any = false;
@@ -713,7 +769,7 @@ function createPlatform(
   speedX = 1,
   minY = null,
   maxY = null,
-  speedY = 1
+  speedY = 1,
 ) {
   platforms.push({
     x,
@@ -760,7 +816,7 @@ function createCannon(
   height = defaultProjectileHeight,
   minPos = null,
   maxPos = null,
-  speed = 1
+  speed = 1,
 ) {
   if (wallLocation === "top") {
     cannons.push({
@@ -841,7 +897,7 @@ function createCollectable(
   bounce = 1,
   minX = null,
   maxX = null,
-  speed = 1
+  speed = 1,
 ) {
   if (type !== "") {
     var image = document.createElement("img");
@@ -937,6 +993,11 @@ function keyboardControlActions() {
       jumpTimer = 19; //this counts how many frames to have the jump last.
       player.onGround = false; //bug fix for jump animation, you have to change this or the jump animation doesn't work
       frameIndex = 4;
+    } else if (player.canFly) {
+      player.speedY -= 0.8;
+      if (player.speedY < -7) {
+        player.speedY = -7;
+      }
     }
   }
 }
