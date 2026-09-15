@@ -8,7 +8,14 @@ function registerSetup(setup) {
 }
 
 function main() {
+  if (gamePaused) {
+    return;
+  }
+
   ctx.clearRect(0, 0, 1400, 750); //erase the screen so you can draw everything in it's most current position
+  drawWinStreak();
+  updatePlatformerFeatures();
+  drawFeatureHUD();
 
   if (shouldDrawGrid) {
     makeGrid();
@@ -31,6 +38,7 @@ function main() {
   drawProjectiles();
   drawCannons();
   drawCollectables();
+  drawPlatformerFeatures();
   playerFrictionAndGravity();
 
   player.x += player.speedX;
@@ -103,7 +111,12 @@ function changeAnimationType() {
     return;
   }
 
-  if (player.canFly && !player.onGround && (keyPress.up || keyPress.space)) {
+  if (
+    player.canFly &&
+    flightFuel > 0 &&
+    !player.onGround &&
+    (keyPress.up || keyPress.space)
+  ) {
     currentAnimationType = animationTypes.flyingJump;
     return;
   }
@@ -346,7 +359,10 @@ function resolveCollision(objx, objy, objw, objh) {
 
 function projectileCollision() {
   //checking if the player is dead
-  if (currentAnimationType === animationTypes.frontDeath) {
+  if (
+    currentAnimationType === animationTypes.frontDeath ||
+    invincibilityFrames > 0
+  ) {
     return;
   }
 
@@ -374,12 +390,16 @@ function projectileCollision() {
     ) {
       currentAnimationType = animationTypes.frontDeath;
       frameIndex = 0;
+      breakCombo();
     }
   }
 }
 
 function badPlatformCollision() {
-  if (currentAnimationType === animationTypes.frontDeath) {
+  if (
+    currentAnimationType === animationTypes.frontDeath ||
+    invincibilityFrames > 0
+  ) {
     return;
   }
   for (var i = 0; i < badPlatforms.length; i++) {
@@ -391,11 +411,13 @@ function badPlatformCollision() {
     ) {
       currentAnimationType = animationTypes.frontDeath;
       frameIndex = 0;
+      breakCombo();
     }
   }
 }
 
 function deathOfPlayer() {
+  resetWinStreak();
   ctx.fillStyle = "grey";
   ctx.fillRect(
     canvas.width / 4,
@@ -420,7 +442,7 @@ function deathOfPlayer() {
   );
   if (keyPress.any) {
     keyPress.any = false;
-    window.location.reload();
+    restartGame();
   }
 }
 
@@ -442,7 +464,12 @@ function playerFrictionAndGravity() {
     player.speedX = player.speedX + friction;
   }
 
-  if (player.canFly && !player.onGround && (keyPress.up || keyPress.space)) {
+  if (
+    player.canFly &&
+    flightFuel > 0 &&
+    !player.onGround &&
+    (keyPress.up || keyPress.space)
+  ) {
     player.speedY -= 0.75;
     if (player.speedY < -7) {
       player.speedY = -7;
@@ -705,19 +732,21 @@ function drawCollectables() {
 function collectablesCollide() {
   for (var i = 0; i < collectables.length; i++) {
     if (
+      !collectables[i].collected &&
       collectables[i].x + collectableWidth > player.x &&
       collectables[i].x < player.x + hitBoxWidth &&
       collectables[i].y < player.y + hitBoxHeight &&
       collectables[i].y + collectableHeight > player.y
     ) {
       collectables[i].collected = true;
+      registerCollectablePickup();
       checkForWin();
     }
   }
 }
 
 function checkForWin() {
-  if (collectables.length === 0) {
+  if (collectables.length === 0 || !finalChallengeComplete) {
     return; // If there are no collectables, we can't win
   }
   for (var i = 0; i < collectables.length; i++) {
@@ -730,6 +759,8 @@ function checkForWin() {
 
 function winGame() {
   // If we reach this point, all collectables are collected
+  recordWinStreak();
+  clearCheckpoint();
   ctx.fillStyle = "grey";
   ctx.fillRect(
     canvas.width / 4,
@@ -740,7 +771,7 @@ function winGame() {
   ctx.fillStyle = "white";
   ctx.font = "800% serif";
   ctx.fillText(
-    "You Win!",
+    secretEndingFound ? "Secret Ending!" : "You Win!",
     canvas.width / 4,
     canvas.height / 6 + canvas.height / 5,
     (canvas.width / 16) * 14,
@@ -752,9 +783,15 @@ function winGame() {
     canvas.height / 6 + canvas.height / 3,
     (canvas.width / 16) * 14,
   );
+  ctx.font = "bold 32px sans-serif";
+  ctx.fillText(
+    `Win streak: ${winStreak}`,
+    canvas.width / 4,
+    canvas.height / 6 + canvas.height / 2.4,
+  );
   if (keyPress.any) {
     keyPress.any = false;
-    window.location.reload();
+    restartGame();
   }
 }
 

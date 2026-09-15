@@ -14,6 +14,141 @@ body {
   gap: 12px;
 }
 
+.game-shell:fullscreen {
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: #202737;
+}
+
+.game-shell:fullscreen canvas {
+  max-width: calc(100vw - 40px);
+  max-height: calc(100vh - 80px);
+  object-fit: contain;
+}
+
+.game-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.secret-question-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: #000;
+}
+
+.secret-question-overlay[hidden] {
+  display: none;
+}
+
+.secret-question-box {
+  display: grid;
+  gap: 18px;
+  width: min(420px, calc(100vw - 48px));
+  padding: 32px;
+  color: #fff;
+  background: #000;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+}
+
+.secret-question-box label {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.secret-question-box input {
+  padding: 12px;
+  color: #fff;
+  background: #000;
+  border: 1px solid #fff;
+  font: inherit;
+}
+
+.secret-question-box button {
+  justify-self: start;
+  padding: 10px 16px;
+  color: #fff;
+  background: #000;
+  border: 1px solid #fff;
+  font: inherit;
+  cursor: pointer;
+}
+
+.power-up-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.power-up-overlay[hidden] {
+  display: none;
+}
+
+.power-up-box {
+  width: min(820px, calc(100vw - 40px));
+  padding: 28px;
+  color: #fff;
+  background: #202737;
+  border: 2px solid #f2c14e;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.power-up-box h2 {
+  margin: 0 0 8px;
+}
+
+.power-up-box p {
+  margin: 0 0 22px;
+}
+
+.power-up-options {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.power-up-option {
+  display: grid;
+  gap: 12px;
+  min-height: 140px;
+  padding: 18px;
+  color: #fff;
+  background: #11151f;
+  border: 1px solid #52616b;
+  font: inherit;
+  cursor: pointer;
+}
+
+.power-up-option:hover,
+.power-up-option:focus-visible {
+  border-color: #f2c14e;
+  outline: none;
+}
+
+.power-up-option strong {
+  color: #f2c14e;
+  font-size: 1.15rem;
+}
+
+@media (max-width: 650px) {
+  .power-up-options {
+    grid-template-columns: 1fr;
+  }
+
+  .power-up-option {
+    min-height: auto;
+  }
+}
+
 canvas {
   background-color: lightblue;
   margin: 20px 20px 0;
@@ -21,7 +156,8 @@ canvas {
   border: 5px solid rgba(118, 0, 233, 0.375);
 }
 
-#restartButton {
+#restartButton,
+#fullscreenButton {
   background: #7600e9;
   color: white;
   border: none;
@@ -35,7 +171,8 @@ canvas {
     opacity 0.15s ease;
 }
 
-#restartButton:hover {
+#restartButton:hover,
+#fullscreenButton:hover {
   transform: translateY(-1px);
   opacity: 0.95;
 }

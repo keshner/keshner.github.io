@@ -14,7 +14,37 @@
 <body id="body">
   <div class="game-shell">
     <canvas id="canvas" width="1400" height="750"></canvas>
-    <button id="restartButton" type="button">Restart</button>
+    <div class="game-controls">
+      <button id="restartButton" type="button">Restart</button>
+      <button id="fullscreenButton" type="button">Fullscreen</button>
+    </div>
+    <div id="secretQuestion" class="secret-question-overlay" hidden>
+      <form id="secretQuestionForm" class="secret-question-box">
+        <label for="secretAnswer">How did you find this secret door?</label>
+        <input id="secretAnswer" name="secretAnswer" type="text" required />
+        <button type="submit">Submit Answer</button>
+      </form>
+    </div>
+    <div id="powerUpChoice" class="power-up-overlay" hidden>
+      <div class="power-up-box">
+        <h2>Choose your boost</h2>
+        <p>The game is paused. Pick one option.</p>
+        <div class="power-up-options">
+          <button class="power-up-option" type="button" data-power-up="shield">
+            <strong>Shield</strong>
+            <span>Become invincible for 15 seconds.</span>
+          </button>
+          <button class="power-up-option" type="button" data-power-up="boost">
+            <strong>Boost</strong>
+            <span>Gain time, flight fuel, and bonus points.</span>
+          </button>
+          <button class="power-up-option" type="button" data-power-up="risk">
+            <strong>Risk</strong>
+            <span>Lose your checkpoint and score progress.</span>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
   <img id="cannon" src="images/cannon.png" />
   <img id="player" src="images/halle.png" />

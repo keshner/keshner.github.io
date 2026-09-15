@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  background: #48CDD1;
+  background: #163d68;
   color: #222;
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
@@ -170,18 +170,18 @@ nav h1 {
 
 .nav-li a:hover {
   background: #000000;
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
 :root {
-  --turquoise: #48CDD1;
-  --deep-turquoise: #28B8BD;
+  --turquoise: #163d68;
+  --deep-turquoise: #28b8bd;
   --black: #000000;
-  --white: #F8F8F6;
+  --white: #f8f8f6;
   --gray: #333333;
-  --light-gray: #E5E7EB;
-  --nav-hover: #259CB3;
-  --accent: #EE6C4D;
+  --light-gray: #e5e7eb;
+  --nav-hover: #259cb3;
+  --accent: #ee6c4d;
 }
 
 body {
@@ -239,7 +239,7 @@ h2 {
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 160px);
-  background: #F5E8D9;
+  background: #f5e8d9;
 }
 
 .portfolio-card {
@@ -302,7 +302,10 @@ h2 {
   background: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 12px;
-  transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
   text-align: left;
 }
 
