@@ -761,6 +761,11 @@ function winGame() {
   // If we reach this point, all collectables are collected
   recordWinStreak();
   clearCheckpoint();
+  const animationTime = featureFrameCount / frameRate;
+  const winScale = secretWinAnimation
+    ? 1 + Math.sin(animationTime * 6) * 0.12
+    : 1;
+  const winOffset = secretWinAnimation ? Math.sin(animationTime * 4) * 12 : 0;
   ctx.fillStyle = "grey";
   ctx.fillRect(
     canvas.width / 4,
@@ -769,11 +774,15 @@ function winGame() {
     canvas.height / 2,
   );
   ctx.fillStyle = "white";
-  ctx.font = "800% serif";
+  ctx.font = `${800 * winScale}% serif`;
   ctx.fillText(
-    secretEndingFound ? "Secret Ending!" : "You Win!",
+    secretWinAnimation
+      ? "I WIN!"
+      : secretEndingFound
+        ? "Secret Ending!"
+        : "You Win!",
     canvas.width / 4,
-    canvas.height / 6 + canvas.height / 5,
+    canvas.height / 6 + canvas.height / 5 + winOffset,
     (canvas.width / 16) * 14,
   );
   ctx.font = "500% serif";

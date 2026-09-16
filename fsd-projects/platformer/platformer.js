@@ -15,6 +15,7 @@ let comboScore = 0;
 let checkpointReached = false;
 let finalChallengeComplete = false;
 let secretEndingFound = false;
+let secretWinAnimation = false;
 let secretQuestionAnswered = false;
 let featureFrameCount = 0;
 let restartGame;
@@ -316,8 +317,17 @@ $(function () {
           secretQuestionAnswered = false;
           return;
         }
-        secretEndingFound = true;
-        player.winConditionMet = true;
+        if (answer.toLowerCase() === "i am jus goated") {
+          secretWinAnimation = true;
+          secretEndingFound = true;
+          player.winConditionMet = true;
+          return;
+        }
+        secretWinAnimation = false;
+        secretEndingFound = false;
+        player.winConditionMet = false;
+        currentAnimationType = animationTypes.frontDeath;
+        frameIndex = 0;
       });
       $(".power-up-option").on("click", function () {
         applyPowerUp($(this).data("powerUp"));
@@ -406,6 +416,7 @@ $(function () {
     checkpointReached = false;
     finalChallengeComplete = false;
     secretEndingFound = false;
+    secretWinAnimation = false;
     secretQuestionAnswered = false;
     gamePaused = false;
     nextPowerUpFrame = powerUpIntervalFrames;

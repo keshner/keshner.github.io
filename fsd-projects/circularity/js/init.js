@@ -57,21 +57,48 @@ var init = function (window) {
         it to the opposite side of the screen.
         */
     game.checkCirclePosition = function (circle) {
-      // if the circle has gone past the RIGHT side of the screen then place it on the LEFT
-      // TODO 6 : YOUR CODE STARTS HERE //////////////////////
-      if (circle.x > canvas.width) {
+      var slowWrapStep = 1;
+
+      // First wrap to the opposite side of the canvas.
+      if (circle.x > canvas.width + circle.radius) {
         circle.x = -circle.radius;
-      } else if (circle.x < 0) {
+        circle.wrapX = 1;
+      } else if (circle.x < -circle.radius) {
         circle.x = canvas.width + circle.radius;
+        circle.wrapX = -1;
+      } else if (circle.wrapX === 1) {
+        circle.x += slowWrapStep;
+        if (circle.x >= canvas.width + circle.radius) {
+          circle.x = canvas.width + circle.radius;
+          circle.wrapX = 0;
+        }
+      } else if (circle.wrapX === -1) {
+        circle.x -= slowWrapStep;
+        if (circle.x <= -circle.radius) {
+          circle.x = -circle.radius;
+          circle.wrapX = 0;
+        }
       }
 
-      if (circle.y > canvas.height) {
+      if (circle.y > canvas.height + circle.radius) {
         circle.y = -circle.radius;
-      } else if (circle.y < 0) {
+        circle.wrapY = 1;
+      } else if (circle.y < -circle.radius) {
         circle.y = canvas.height + circle.radius;
+        circle.wrapY = -1;
+      } else if (circle.wrapY === 1) {
+        circle.y += slowWrapStep;
+        if (circle.y >= canvas.height + circle.radius) {
+          circle.y = canvas.height + circle.radius;
+          circle.wrapY = 0;
+        }
+      } else if (circle.wrapY === -1) {
+        circle.y -= slowWrapStep;
+        if (circle.y <= -circle.radius) {
+          circle.y = -circle.radius;
+          circle.wrapY = 0;
+        }
       }
-
-      // YOUR TODO 6 CODE ENDS HERE //////////////////////////
     };
 
     /////////////////////////////////////////////////////////////
